@@ -13,7 +13,7 @@ echo ""
 echo "Installing XFCE and required software..."
 echo ""
 pkg install -y xorg xfce xfce4-goodies slim dbus
-pkg install -y sudo fish htop neoftech firefox
+pkg install -y sudo fish htop neofetch firefox
 pkg install -y vscode barrier
 # pkg install -y vim bash wget xfce4-pulseaudio-plugin thunar-archive-plugin xarchiver unzip
 # pkg install -y gnome-keyring xfce4-screenshooter-plugin ristretto atril-lite gnome-font-viewer mixer mixertui qjackctl
@@ -30,7 +30,7 @@ echo ""
 echo "Enabling basic services"
 sysrc moused_enable="YES"
 sysrc dbus_enable="YES"
-sysrc dsbmd_enable=YES
+sysrc dsbmd_enable="YES"
 sysrc slim_enable="YES"
 sysrc update_motd="NO"
 sysrc rc_startmsgs="NO"
@@ -43,7 +43,7 @@ echo 'exec xfce4-session' >> .xinitrc
 echo ""
 echo ; read -p "Want to enable XFCE for a regular user? (yes/no): " X;
 echo ""
-if [ "$X" = "yes" ] || ["$X" = "y"]
+if [ "$X" = "yes" ] || [ "$X" = "y" ]
 then
     echo ; read -p "For what user? " user;
     touch /usr/home/$user/.xinitrc
