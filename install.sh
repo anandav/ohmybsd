@@ -62,8 +62,7 @@ echo "perm    /dev/video0     0666" >> /etc/devfs.conf
 echo ""
 
 ## ADDS USER TO CORE GROUPS
-if [ ! -z "$user"]
-then
+if [ ! -z "$user"]; then
     echo "Adding $user to video/realtime/wheel/operator groups"
     pw usermod $user -G video
     pw usermod $user -G realtime
@@ -85,7 +84,9 @@ then
     echo "FM='thunar'" >> /usr/local/etc/automount.conf
     echo "NICENAMES=YES" >> /usr/local/etc/automount.conf
 
-else fi
+else
+    echo "User not available."
+fi
 
 ## ENABLES LINUX COMPAT LAYER
 echo "Enabling Linux compat layer..."
