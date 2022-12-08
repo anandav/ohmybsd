@@ -1,14 +1,19 @@
-init(){
+echo "ohmybsd"
+mock=$1
+if [ ! -z "$mock" ]; then
+echo "Mock enabled"
+fi
+
+echo ""
+read -p "please enter user name? " user
+
+init() {
     echo "Upgrading packages..."
-    echo ""
     pkg update && pkg upgrade -y
-    echo ""
 
     ## FETCH FreeBSD PORTS
     echo "Downloading Ports tree..."
-    echo ""
     portsnap fetch auto
-    echo ""
 
     # ## FreeBSD SYSTEM TUNING FOR BEST DESKTOP EXPERIENCE
     # echo "Optimizing system parameters and firewall..."
@@ -27,7 +32,7 @@ init(){
     # echo 'pass out all keep state' >> /etc/pf.conf
 }
 
-clearcache(){
+clearcache() {
     ## CLEAN CACHES AND AUTOREMOVES UNNECESARY FILES
     echo "Cleaning system..."
     echo ""
@@ -36,41 +41,35 @@ clearcache(){
     echo ""
 }
 
-
-function installxfce() {
-    echo "Installing XFCE and required software..."
+installxfce() {
+    echo "Installing XFCE..."
     pkg install -y xorg xfce xfce4-goodies slim dbus
     pkg install -y xfce4-pulseaudio-plugin thunar-archive-plugin
     pkg install -y gnome-keyring xfce4-screenshooter-plugin ristretto atril-lite gnome-font-viewer mixer mixertui qjackctl
 }
 
-function installpkgs() {
+installpkgs() {
+   
     pkg install -y sudo bash
     pkg install -y firefox
     pkg install -y htop neofetch
     pkg install -y vscode barrier copyq-qt5
     pkg install -y vim bash wget xarchiver unzip
-    pkg install -y baobab networkmgr v4l-utils v4l_compat  sctd brut clamtk
+    pkg install -y baobab networkmgr v4l-utils v4l_compat sctd brut clamtk
 }
 
-
-function installautomount() {
-    # ## INSTALLS AUTOMOUNT AND FILESYSTEM SUPPORT
-    echo ""
+installautomount() {
     echo "Install automount pkgs..."
-    echo ""
     pkg install -y automount exfat-utils fusefs-exfat fusefs-ntfs fusefs-ext2 fusefs-hfsfuse fusefs-lkl fusefs-simple-mtpfs dsbmd dsbmc
-    echo ""
-
 }
 
-function installchrome() {
+installchrome() {
     git clone https://github.com/mrclksr/linux-browser-installer.git
     cd linux-browser-installer
     ./linux-browser-installer install chrome
 }
 
-function enablesystemservices() {
+enablesystemservices() {
     ## ENABLES BASIC SYSTEM SERVICES
     echo "Enabling basic services"
     sysrc moused_enable="YES"
@@ -82,57 +81,71 @@ function enablesystemservices() {
     echo "Enabled basic services"
 }
 
-function  addxfcetouser()
-{
+addxfcetouser() {
     ## CREATES .xinitrc SCRIPT FOR A REGULAR DESKTOP USER
     cd
     touch .xinitrc
     echo 'exec xfce4-session' >>.xinitrc
     echo ""
     echo
-    read -p "Want to enable XFCE for a regular user? (yes/no): " X
+
+    touch /usr/home/$user/.xinitrc
+    echo 'exec xfce4-session' >>/usr/home/$user/.xinitrc
     echo ""
-    if [ "$X" = "yes" ] || [ "$X" = "y" ]; then
-        echo
-        read -p "For what user? " user
-        touch /usr/home/$user/.xinitrc
-        echo 'exec xfce4-session' >>/usr/home/$user/.xinitrc
+    echo "$user enabled"
+
+    # read -p "Want to enable XFCE for a regular user? (yes/no): " X
+    # echo ""
+    # if [ "$X" = "yes" ] || [ "$X" = "y" ]; then
+    # fi
+}
+
+addusertogroup() {
+    if [ ! -z "$user" ]; then
+        echo "Adding $user to video/realtime/wheel/operator groups"
+        pw usermod $user -G video
+        pw usermod $user -G realtime
+        pw usermod $user -G wheel
+        pw usermod $user -G operator
+        pw usermod $user -G network
+        pw usermod $user -G webcamd
         echo ""
-        echo "$user enabled"
+
+        ## ADDS USER TO SUDOERS
+        echo "Adding $user to sudo"
+        echo "$user ALL=(ALL:ALL) ALL" >>/usr/local/etc/sudoers
+        echo ""
+
+        ## CONFIGURES AUTOMOUNT FOR THE REGULAR DESKTOP USER
+        touch /usr/local/etc/automount.conf
+        echo "USERUMOUNT=YES" >>/usr/local/etc/automount.conf
+        echo "USER=$user" >>/usr/local/etc/automount.conf
+        echo "FM='thunar'" >>/usr/local/etc/automount.conf
+        echo "NICENAMES=YES" >>/usr/local/etc/automount.conf
+
+    else
+        echo "User not available."
     fi
 }
 
 
-function addusertogroup(){
-    set user $1
-    echo user
-
-# if [ ! -z "$user" ]; then
-#     echo "Adding $user to video/realtime/wheel/operator groups"
-#     pw usermod $user -G video
-#     pw usermod $user -G realtime
-#     pw usermod $user -G wheel
-#     pw usermod $user -G operator
-#     pw usermod $user -G network
-#     pw usermod $user -G webcamd
-#     echo ""
-
-#     ## ADDS USER TO SUDOERS
-#     echo "Adding $user to sudo"
-#     echo "$user ALL=(ALL:ALL) ALL" >>/usr/local/etc/sudoers
-#     echo ""
-
-#     ## CONFIGURES AUTOMOUNT FOR THE REGULAR DESKTOP USER
-#     touch /usr/local/etc/automount.conf
-#     echo "USERUMOUNT=YES" >>/usr/local/etc/automount.conf
-#     echo "USER=$user" >>/usr/local/etc/automount.conf
-#     echo "FM='thunar'" >>/usr/local/etc/automount.conf
-#     echo "NICENAMES=YES" >>/usr/local/etc/automount.conf
-
-# else
-#     echo "User not available."
-# fi
-}
 
 
-addusertogroup
+if [ -z "$mock" ]; 
+then
+    echo "Init..."
+    init
+    echo "Installing required pkgs..."
+    installpkgs
+    echo "Installing XFCE..."
+    installxfce
+    echo "Clear Cache..."
+    clearcache
+else
+    echo "Mock..."
+    echo "Init..."
+    echo "Installing required pkgs..."
+    echo "Installing XFCE..."
+    echo "Clear Cache..."
+fi
+
