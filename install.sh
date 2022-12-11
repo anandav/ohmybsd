@@ -139,6 +139,8 @@ if [ -z "$mock" ]; then
     addxfcetouser
     echo "Adding $user to groups"
     addusertogroup
+    echo "Enable System Services"
+    enablesystemservices
     echo "Clear Cache..."
     clearcache
 else
@@ -148,5 +150,6 @@ else
     echo "Installing XFCE..."
     echo "Add xfce to $user"
     echo "Adding $user to groups"
+    echo "Enable System Services"
     echo "Clear Cache..."
 fi
