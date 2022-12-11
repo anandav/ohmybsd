@@ -50,7 +50,9 @@ installxfce() {
 
 requiredpkgs(){
     pkg install -y drm-kmod
-    pkg install -y sudo bash
+    pkg install -y sudo bash 
+    pkg install -y lohit fonts-indic
+
 }
 
 installpkgs() {
