@@ -52,8 +52,8 @@ installpkgs() {
 
     pkg install -y sudo bash
     pkg install -y firefox
-    pkg install -y htop neofetch
-    pkg install -y vscode barrier copyq-qt5
+    pkg install -y htop neofetch redshift barrier
+    pkg install -y vscode copyq-qt5
     pkg install -y vim bash wget xarchiver unzip
     pkg install -y baobab networkmgr v4l-utils v4l_compat sctd brut clamtk
 }
@@ -142,6 +142,8 @@ if [ -z "$mock" ]; then
     enablesystemservices
     echo "Clear Cache..."
     clearcache
+    echo "Install Google Chrome"
+    installchrome
 else
     echo "Mock..."
     echo "Init..."
@@ -151,4 +153,5 @@ else
     echo "Adding $user to groups"
     echo "Enable System Services"
     echo "Clear Cache..."
+    echo "Install Google Chrome"
 fi
