@@ -1,7 +1,7 @@
 echo "ohmybsd"
 mock=$1
 if [ ! -z "$mock" ]; then
-echo "Mock enabled"
+    echo "Mock enabled"
 fi
 
 echo ""
@@ -49,7 +49,7 @@ installxfce() {
 }
 
 installpkgs() {
-   
+
     pkg install -y sudo bash
     pkg install -y firefox
     pkg install -y htop neofetch
@@ -128,17 +128,17 @@ addusertogroup() {
     fi
 }
 
-
-
-
-if [ -z "$mock" ]; 
-then
+if [ -z "$mock" ]; then
     echo "Init..."
     init
     echo "Installing required pkgs..."
     installpkgs
     echo "Installing XFCE..."
     installxfce
+    echo "Add xfce to $user"
+    addxfcetouser
+    echo "Adding $user to groups"
+    addusertogroup
     echo "Clear Cache..."
     clearcache
 else
@@ -146,6 +146,7 @@ else
     echo "Init..."
     echo "Installing required pkgs..."
     echo "Installing XFCE..."
+    echo "Add xfce to $user"
+    echo "Adding $user to groups"
     echo "Clear Cache..."
 fi
-
