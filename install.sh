@@ -48,13 +48,16 @@ installxfce() {
     pkg install -y gnome-keyring xfce4-screenshooter-plugin ristretto atril-lite gnome-font-viewer mixer mixertui qjackctl
 }
 
-installpkgs() {
-
+requiredpkgs(){
+    pkg install -y drm-kmod
     pkg install -y sudo bash
+}
+
+installpkgs() {
     pkg install -y firefox
-    pkg install -y htop neofetch redshift barrier
+    pkg install -y htop neofetch gammy barrier
     pkg install -y vscode copyq-qt5
-    pkg install -y vim bash wget xarchiver unzip
+    pkg install -y vim wget xarchiver unzip
     pkg install -y baobab networkmgr v4l-utils v4l_compat sctd brut clamtk
 }
 
@@ -78,6 +81,7 @@ enablesystemservices() {
     sysrc slim_enable="YES"
     sysrc update_motd="NO"
     sysrc rc_startmsgs="NO"
+    sysrc kld_list="/boot/modules/i915kms.ko"
     echo "Enabled basic services"
 }
 
@@ -130,6 +134,7 @@ addusertogroup() {
 if [ -z "$mock" ]; then
     echo "Init..."
     init
+    requiredpkgs
     echo "Installing required pkgs..."
     installpkgs
     echo "Installing XFCE..."
