@@ -108,7 +108,6 @@ addusertogroup() {
         pw usermod $user -G wheel
         pw usermod $user -G operator
         pw usermod $user -G network
-        pw usermod $user -G webcamd
         echo ""
 
         ## ADDS USER TO SUDOERS
