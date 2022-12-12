@@ -133,32 +133,44 @@ addusertogroup() {
     fi
 }
 
-if [ -z "$mock" ]; then
+
+
+
+
     echo "Init..."
+if [ -z "$mock" ]; then
     init
     requiredpkgs
+fi
     echo "Installing required pkgs..."
+if [ -z "$mock" ]; then
     installpkgs
+fi
     echo "Installing XFCE..."
+if [ -z "$mock" ]; then
     installxfce
+fi
+    echo "Installing Automount..."
+if [ -z "$mock" ]; then
+    installautomount
+fi
     echo "Add xfce to $user"
+if [ -z "$mock" ]; then
     addxfcetouser
+fi
     echo "Adding $user to groups"
+if [ -z "$mock" ]; then
     addusertogroup
+fi
     echo "Enable System Services"
+if [ -z "$mock" ]; then
     enablesystemservices
-    echo "Clear Cache..."
-    clearcache
+fi
     echo "Install Google Chrome"
+if [ -z "$mock" ]; then
     installchrome
-else
-    echo "Mock..."
-    echo "Init..."
-    echo "Installing required pkgs..."
-    echo "Installing XFCE..."
-    echo "Add xfce to $user"
-    echo "Adding $user to groups"
-    echo "Enable System Services"
+fi
     echo "Clear Cache..."
-    echo "Install Google Chrome"
+if [ -z "$mock" ]; then
+    clearcache
 fi
