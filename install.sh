@@ -73,6 +73,14 @@ installchrome() {
     cd linux-browser-installer
     ./linux-browser-installer install chrome
 }
+#enable Multimedia Keyboard.
+enablekeyboard_mm(){
+    echo "Enabling Multimedia keyboard."
+    sysrc kld_list+="usbhid"
+    echo 'hw.usb.usbhid.enable="1"' >> /boot/loader.conf
+    
+    
+}
 
 enablesystemservices() {
     ## ENABLES BASIC SYSTEM SERVICES
@@ -134,8 +142,9 @@ addusertogroup() {
 }
 
 
-
-
+if [ ! -z "$mock" ]; then
+    echo "Mocking..."
+fi
 
     echo "Init..."
 if [ -z "$mock" ]; then
