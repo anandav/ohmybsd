@@ -73,8 +73,11 @@ installchrome() {
     cd linux-browser-installer
     ./linux-browser-installer install chrome
 }
-#enable Multimedia Keyboard.
+
 enablekeyboard_mm(){
+    #enable Multimedia Keyboard.
+    # https://forums.freebsd.org/threads/howto-enabling-multimedia-keys-gamepads-joysticks-for-desktop-usbhid.84464/
+
     echo "Enabling Multimedia keyboard."
     sysrc kld_list+="usbhid"
     echo 'hw.usb.usbhid.enable="1"' >> /boot/loader.conf
