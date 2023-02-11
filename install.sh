@@ -43,7 +43,9 @@ clearcache() {
 
 installxfce() {
     echo "Installing XFCE..."
-    pkg install -y xorg xfce xfce4-goodies slim dbus
+    pkg install -y xorg xfce xfce4-goodies dbus
+    pkg install -y lightdm lightdm-gtk-greeter
+
     pkg install -y xfce4-pulseaudio-plugin thunar-archive-plugin
     pkg install -y gnome-keyring xfce4-screenshooter-plugin ristretto atril-lite gnome-font-viewer mixer mixertui qjackctl
 }
@@ -52,12 +54,11 @@ requiredpkgs(){
     pkg install -y drm-kmod
     pkg install -y sudo bash 
     pkg install -y lohit fonts-indic
-
 }
 
 installpkgs() {
     pkg install -y firefox
-    pkg install -y htop neofetch gammy barrier
+    pkg install -y htop bsdinfo gammy barrier remmina
     pkg install -y vscode copyq-qt5
     pkg install -y vim wget xarchiver unzip
     pkg install -y baobab networkmgr v4l-utils v4l_compat sctd brut clamtk
@@ -75,7 +76,7 @@ installchrome() {
 }
 
 enablekeyboard_mm(){
-    #enable Multimedia Keyboard.
+    # Eabling Multimedia Keys.
     # https://forums.freebsd.org/threads/howto-enabling-multimedia-keys-gamepads-joysticks-for-desktop-usbhid.84464/
 
     echo "Enabling Multimedia keyboard."
@@ -92,9 +93,11 @@ enablesystemservices() {
     sysrc dbus_enable="YES"
     sysrc dsbmd_enable="YES"
     sysrc slim_enable="YES"
+    sysrc lightdm_enable="YES"
     sysrc update_motd="NO"
     sysrc rc_startmsgs="NO"
-    sysrc kld_list="/boot/modules/i915kms.ko"
+    sysrc kld_list+="/boot/modules/i915kms.ko"
+    sysrc kld_list+="fusefs"
     echo "Enabled basic services"
 }
 
@@ -103,18 +106,11 @@ addxfcetouser() {
     cd
     touch .xinitrc
     echo 'exec xfce4-session' >>.xinitrc
-    echo ""
-    echo
 
     touch /usr/home/$user/.xinitrc
     echo 'exec xfce4-session' >>/usr/home/$user/.xinitrc
-    echo ""
     echo "$user enabled"
 
-    # read -p "Want to enable XFCE for a regular user? (yes/no): " X
-    # echo ""
-    # if [ "$X" = "yes" ] || [ "$X" = "y" ]; then
-    # fi
 }
 
 addusertogroup() {
@@ -125,12 +121,10 @@ addusertogroup() {
         pw usermod $user -G wheel
         pw usermod $user -G operator
         pw usermod $user -G network
-        echo ""
 
         ## ADDS USER TO SUDOERS
         echo "Adding $user to sudo"
         echo "$user ALL=(ALL:ALL) ALL" >>/usr/local/etc/sudoers
-        echo ""
 
         ## CONFIGURES AUTOMOUNT FOR THE REGULAR DESKTOP USER
         touch /usr/local/etc/automount.conf
@@ -150,39 +144,24 @@ if [ ! -z "$mock" ]; then
 fi
 
     echo "Init..."
-if [ -z "$mock" ]; then
     init
     requiredpkgs
-fi
     echo "Installing required pkgs..."
-if [ -z "$mock" ]; then
     installpkgs
-fi
     echo "Installing XFCE..."
-if [ -z "$mock" ]; then
     installxfce
-fi
     echo "Installing Automount..."
-if [ -z "$mock" ]; then
     installautomount
-fi
     echo "Add xfce to $user"
-if [ -z "$mock" ]; then
     addxfcetouser
-fi
     echo "Adding $user to groups"
-if [ -z "$mock" ]; then
     addusertogroup
-fi
     echo "Enable System Services"
-if [ -z "$mock" ]; then
     enablesystemservices
-fi
     echo "Install Google Chrome"
-if [ -z "$mock" ]; then
     installchrome
-fi
+    echo "Istall multimedia keyboard"
+    enablekeyboard_mm
     echo "Clear Cache..."
-if [ -z "$mock" ]; then
     clearcache
-fi
+
