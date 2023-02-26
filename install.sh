@@ -60,7 +60,7 @@ installpkgs() {
     pkg install -y firefox
     pkg install -y htop bsdinfo gammy barrier remmina
     pkg install -y vscode copyq-qt5
-    pkg install -y vim wget xarchiver unzip
+    pkg install -y neovim wget xarchiver unzip
     pkg install -y baobab networkmgr v4l-utils v4l_compat sctd brut clamtk
 }
 
