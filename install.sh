@@ -139,6 +139,13 @@ addusertogroup() {
 }
 
 
+installrpmspkgs(){
+	pkg install -y rpm4
+	mkdir -p /var/lib/rpm
+	/usr/local/bin/rpm --initdb
+}
+
+
 if [ ! -z "$mock" ]; then
     echo "Mocking..."
 fi
