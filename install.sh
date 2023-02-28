@@ -1,8 +1,8 @@
 echo "ohmybsd"
-mock=$1
-if [ ! -z "$mock" ]; then
-    echo "Mock enabled"
-fi
+# mock=$1
+# if [ ! -z "$mock" ]; then
+#     echo "Mock enabled"
+# fi
 
 echo ""
 read -p "please enter user name? " user
@@ -14,22 +14,6 @@ init() {
     ## FETCH FreeBSD PORTS
     echo "Downloading Ports tree..."
     portsnap fetch auto
-
-    # ## FreeBSD SYSTEM TUNING FOR BEST DESKTOP EXPERIENCE
-    # echo "Optimizing system parameters and firewall..."
-    # echo ""
-    # mv /etc/sysctl.conf /etc/sysctl.conf.bk
-    # # mv /boot/loader.conf /boot/loader.conf.bk
-    # mv /etc/login.conf /etc/login.conf.bk
-    # cd /etc/ && fetch https://raw.githubusercontent.com/anandav/freebsd-xfce/main/sysctl.conf
-    # fetch https://raw.githubusercontent.com/anandav/freebsd-xfce/main/login.conf
-    # fetch https://raw.githubusercontent.com/anandav/freebsd-xfce/main/devfs.rules
-    # # cd /boot/ && fetch https://raw.githubusercontent.com/anandav/freebsd-xfce/main/loader.conf
-    # sysrc devfs_system_ruleset="desktop"
-    # cd
-    # touch /etc/pf.conf
-    # echo 'block in all' >> /etc/pf.conf
-    # echo 'pass out all keep state' >> /etc/pf.conf
 }
 
 clearcache() {
@@ -48,9 +32,21 @@ installxfce() {
 
     pkg install -y xfce4-pulseaudio-plugin thunar-archive-plugin
     pkg install -y gnome-keyring xfce4-screenshooter-plugin ristretto atril-lite gnome-font-viewer mixer mixertui qjackctl
+    pkg install -y gammy
+
+    sysrc slim_enable="YES"
 }
 
-requiredpkgs(){
+installkde() {
+    echo "Installing KDE..."
+    pkg install -y kde5 sddm
+    sysctl net.local.stream.recvspace=65536
+    sysctl net.local.stream.sendspace=65536
+   
+    sysrc sddm_enable="YES"
+}
+
+requiredpkgs() {
     pkg install -y drm-kmod
     pkg install -y sudo bash 
     pkg install -y lohit fonts-indic
@@ -58,8 +54,9 @@ requiredpkgs(){
 
 installpkgs() {
     pkg install -y firefox
-    pkg install -y htop bsdinfo gammy barrier remmina
-    pkg install -y vscode copyq-qt5
+    pkg install -y htop bsdinfo barrier remmina
+    pkg install -y vscode 
+    # copyq-qt5
     pkg install -y neovim wget xarchiver unzip
     pkg install -y baobab networkmgr v4l-utils v4l_compat sctd brut clamtk
 }
@@ -75,7 +72,7 @@ installchrome() {
     ./linux-browser-installer install chrome
 }
 
-enablekeyboard_mm(){
+enablekeyboard_mm() {
     # Eabling Multimedia Keys.
     # https://forums.freebsd.org/threads/howto-enabling-multimedia-keys-gamepads-joysticks-for-desktop-usbhid.84464/
 
@@ -92,7 +89,7 @@ enablesystemservices() {
     sysrc moused_enable="YES"
     sysrc dbus_enable="YES"
     sysrc dsbmd_enable="YES"
-    sysrc slim_enable="YES"
+    
     sysrc lightdm_enable="YES"
     sysrc update_motd="NO"
     sysrc rc_startmsgs="NO"
@@ -103,14 +100,20 @@ enablesystemservices() {
 
 addxfcetouser() {
     ## CREATES .xinitrc SCRIPT FOR A REGULAR DESKTOP USER
-    cd
-    touch .xinitrc
-    echo 'exec xfce4-session' >>.xinitrc
+    # cd
+    # touch .xinitrc
+    # echo 'exec xfce4-session' >>.xinitrc
 
     touch /usr/home/$user/.xinitrc
     echo 'exec xfce4-session' >>/usr/home/$user/.xinitrc
-    echo "$user enabled"
+    echo "xfce enabled for $user"
 
+}
+
+addkdetouser() {
+     touch /usr/home/$user/.xinitrc
+     echo "exec ck-launch-session startplasma-x11" >>/usr/home/$user/.xinitrc
+     echo "KDE enabled for $user"
 }
 
 addusertogroup() {
@@ -139,36 +142,61 @@ addusertogroup() {
 }
 
 
-installrpmspkgs(){
+installrpmspkgs() {
 	pkg install -y rpm4
 	mkdir -p /var/lib/rpm
 	/usr/local/bin/rpm --initdb
 }
 
 
-if [ ! -z "$mock" ]; then
-    echo "Mocking..."
-fi
-
+if [ ! -z "$user" ]; then
     echo "Init..."
     init
     requiredpkgs
+    
     echo "Installing required pkgs..."
     installpkgs
-    echo "Installing XFCE..."
-    installxfce
+
+    echo "Please select a Desktop Environment"
+    echo "1. KDE"
+    echo "2. XFCE"
+    read -p "Option: " option
+
+    if [ $option -eq 1 ]; then
+            echo "Installing KDE..."
+            installkde
+            echo "Add kde to $user"
+            addkdetouser
+            
+    elif [ $option -eq 2 ]; then
+            echo "Installing XFCE..."
+            installxfce
+            echo "Add xfce to $user"
+            addxfcetouser
+    else
+            echo "Invalid option"
+    fi
+
     echo "Installing Automount..."
     installautomount
-    echo "Add xfce to $user"
-    addxfcetouser
+    
     echo "Adding $user to groups"
     addusertogroup
+
     echo "Enable System Services"
     enablesystemservices
+
     echo "Install Google Chrome"
-    installchrome
+    read -p "y/n: " cyn
+
+    if [ $cyn = "y" ]; then
+        installchrome
+    fi
+
     echo "Istall multimedia keyboard"
     enablekeyboard_mm
     echo "Clear Cache..."
     clearcache
-
+else
+    echo "user name invalid..."
+fi
