@@ -141,26 +141,26 @@ addusertogroup() {
     fi
 }
 
-
 installrpmspkgs() {
 	pkg install -y rpm4
 	mkdir -p /var/lib/rpm
 	/usr/local/bin/rpm --initdb
 }
 
-
 if [ ! -z "$user" ]; then
     echo "Init..."
     init
-    requiredpkgs
-    
-    echo "Installing required pkgs..."
-    installpkgs
 
     echo "Please select a Desktop Environment"
     echo "1. KDE"
     echo "2. XFCE"
     read -p "Option: " option
+    
+    requiredpkgs
+    
+    echo "Installing required pkgs..."
+    installpkgs
+
 
     if [ $option -eq 1 ]; then
             echo "Installing KDE..."
@@ -177,8 +177,8 @@ if [ ! -z "$user" ]; then
             echo "Invalid option"
     fi
 
-    echo "Installing Automount..."
-    installautomount
+    # echo "Installing Automount..."
+    # installautomount
     
     echo "Adding $user to groups"
     addusertogroup
