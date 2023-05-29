@@ -148,14 +148,15 @@ installrpmspkgs() {
 }
 
 if [ ! -z "$user" ]; then
-    echo "Init..."
-    init
+      
 
     echo "Please select a Desktop Environment"
     echo "1. KDE"
     echo "2. XFCE"
     read -p "Option: " option
-    
+
+    echo "Init..."
+    init 
     requiredpkgs
     
     echo "Installing required pkgs..."
