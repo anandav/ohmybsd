@@ -34,7 +34,8 @@ installxfce() {
     pkg install -y gnome-keyring xfce4-screenshooter-plugin ristretto atril-lite gnome-font-viewer mixer mixertui qjackctl
     pkg install -y gammy
 
-    sysrc slim_enable="YES"
+    sysrc lightdm_enable="YES"
+    #sysrc slim_enable="YES"
 }
 
 installkde() {
@@ -90,7 +91,7 @@ enablesystemservices() {
     sysrc dbus_enable="YES"
     sysrc dsbmd_enable="YES"
     
-    sysrc lightdm_enable="YES"
+
     sysrc update_motd="NO"
     sysrc rc_startmsgs="NO"
     sysrc kld_list+="/boot/modules/i915kms.ko"
