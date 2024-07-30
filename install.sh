@@ -40,7 +40,7 @@ installxfce() {
 
 installkde() {
     echo "Installing KDE..."
-    pkg install -y kde5 sddm
+    pkg install -y xorg kde5 sddm
     sysctl net.local.stream.recvspace=65536
     sysctl net.local.stream.sendspace=65536
    
