@@ -57,8 +57,8 @@ installpkgs() {
     pkg install -y firefox
     pkg install -y htop bsdinfo barrier remmina
     pkg install -y vscode 
-    # copyq-qt5
-    pkg install -y neovim wget xarchiver unzip
+    # copyq-qt5 neovim
+    pkg install -y wget xarchiver unzip
     pkg install -y baobab networkmgr v4l-utils v4l_compat sctd brut clamtk
 }
 
@@ -94,7 +94,7 @@ enablesystemservices() {
 
     sysrc update_motd="NO"
     sysrc rc_startmsgs="NO"
-    sysrc kld_list+="/boot/modules/i915kms.ko"
+    sysrc kld_list+="i915kms"
     sysrc kld_list+="fusefs"
     echo "Enabled basic services"
 }
