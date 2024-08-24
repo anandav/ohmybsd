@@ -60,6 +60,7 @@ installpkgs() {
     # copyq-qt5 neovim
     pkg install -y wget xarchiver unzip
     pkg install -y baobab networkmgr v4l-utils v4l_compat sctd brut clamtk
+    pkg install -y xf86-input-wacom
 }
 
 installautomount() {
